@@ -27,8 +27,9 @@ const iconByCategory = {
 };
 
 const DEFAULT_MAP_CENTER = [48.8566, 2.3522];
+const HIGH_ACCURACY_TIMEOUT_MS = 15000;
 
-const EventMarkers = memo(({ items }) =>
+const EventMarkerList = memo(({ items }) =>
   items.map((event) => {
     const lat = event.location?.lat;
     const lng = event.location?.lng;
@@ -60,7 +61,10 @@ const MapDisplay = () => {
       try {
         const permission = await Geolocation.requestPermissions();
         if (permission.location === 'granted') {
-          const { coords } = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+          const { coords } = await Geolocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: HIGH_ACCURACY_TIMEOUT_MS
+          });
           setUserPosition([coords.latitude, coords.longitude]);
         }
       } catch (geoError) {
@@ -109,7 +113,7 @@ const MapDisplay = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <EventMarkers items={filteredEvents} />
+        <EventMarkerList items={filteredEvents} />
       </MapContainer>
     </div>
   );
