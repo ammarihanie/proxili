@@ -2,8 +2,6 @@ import {
   addDoc,
   collection,
   onSnapshot,
-  orderBy,
-  query,
   serverTimestamp
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -11,15 +9,19 @@ import { db } from './firebase';
 const eventsCollection = collection(db, 'events');
 
 export const subscribeToEvents = (callback, onError) => {
-  const eventsQuery = query(eventsCollection, orderBy('createdAt', 'desc'));
-
   return onSnapshot(
-    eventsQuery,
+    eventsCollection,
     (snapshot) => {
-      const events = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const events = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .sort((a, b) => {
+          const aDate = a.createdAt?.toDate?.() ?? new Date(0);
+          const bDate = b.createdAt?.toDate?.() ?? new Date(0);
+          return bDate - aDate;
+        });
 
       callback(events);
     },

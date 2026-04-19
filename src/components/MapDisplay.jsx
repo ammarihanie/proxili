@@ -26,13 +26,19 @@ const iconByCategory = {
   })
 };
 
-const EventMarkers = memo(({ items }) =>
+const MemoizedEventMarkers = memo(({ items }) =>
   items.map((event) => {
+    const lat = event.location?.lat;
+    const lng = event.location?.lng;
+    if (typeof lat !== 'number' || typeof lng !== 'number') {
+      return null;
+    }
+
     const category = event.category?.toLowerCase() ?? 'default';
     const icon = iconByCategory[category] ?? iconByCategory.default;
 
     return (
-      <Marker key={event.id} position={[event.location?.lat, event.location?.lng]} icon={icon}>
+      <Marker key={event.id} position={[lat, lng]} icon={icon}>
         <Popup>
           <p className="font-semibold">{event.title}</p>
           <p className="text-sm text-slate-600">{event.category}</p>
@@ -101,7 +107,7 @@ const MapDisplay = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <EventMarkers items={filteredEvents} />
+        <MemoizedEventMarkers items={filteredEvents} />
       </MapContainer>
     </div>
   );
