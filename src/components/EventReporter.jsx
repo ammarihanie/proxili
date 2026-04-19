@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 
+const HIGH_ACCURACY_TIMEOUT_MS = 15000;
+
 const EventReporter = () => {
   const [coords, setCoords] = useState(null);
   const [photoUrl, setPhotoUrl] = useState('');
@@ -14,7 +16,7 @@ const EventReporter = () => {
 
     const { coords: preciseCoords } = await Geolocation.getCurrentPosition({
       enableHighAccuracy: true,
-      timeout: 15000
+      timeout: HIGH_ACCURACY_TIMEOUT_MS
     });
 
     const nextCoords = {

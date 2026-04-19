@@ -26,7 +26,9 @@ const iconByCategory = {
   })
 };
 
-const MemoizedEventMarkers = memo(({ items }) =>
+const DEFAULT_MAP_CENTER = [48.8566, 2.3522];
+
+const EventMarkers = memo(({ items }) =>
   items.map((event) => {
     const lat = event.location?.lat;
     const lng = event.location?.lng;
@@ -51,7 +53,7 @@ const MemoizedEventMarkers = memo(({ items }) =>
 const MapDisplay = () => {
   const { events, loading, error } = useEvents();
   const [search, setSearch] = useState('');
-  const [userPosition, setUserPosition] = useState([48.8566, 2.3522]);
+  const [userPosition, setUserPosition] = useState(DEFAULT_MAP_CENTER);
 
   useEffect(() => {
     const loadPosition = async () => {
@@ -107,7 +109,7 @@ const MapDisplay = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <MemoizedEventMarkers items={filteredEvents} />
+        <EventMarkers items={filteredEvents} />
       </MapContainer>
     </div>
   );
